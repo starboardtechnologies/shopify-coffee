@@ -1,0 +1,28 @@
+export const FEATURED_PRODUCTS_QUERY = `#graphql
+query FeaturedProducts(
+  $country: CountryCode
+  $language: LanguageCode
+)
+@inContext(country: $country, language: $language) {
+
+  products(first: 4, sortKey: BEST_SELLING) {
+    nodes {
+      id
+      title
+      handle
+
+      featuredImage {
+        url
+        altText
+      }
+
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+}
+`;
