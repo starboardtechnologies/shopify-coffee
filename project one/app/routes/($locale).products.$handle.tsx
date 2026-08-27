@@ -1,16 +1,14 @@
 import type {Route} from "./+types/($locale).products.$handle";
+import type {Product} from "~/types/product";
 
 import {useState} from "react";
 import {useCart} from "~/components/cart/CartContext";
 
 import {coffeeProducts} from "~/data/coffeeProducts";
-
 import {PRODUCT_QUERY} from "~/graphql/product";
 
 
-
 type ShopifyProduct = {
-
   id: string;
 
   title: string;
@@ -25,25 +23,16 @@ type ShopifyProduct = {
   } | null;
 
   priceRange: {
-
     minVariantPrice: {
-
       amount: string;
-
     };
-
   };
 
   variants: {
-
     nodes: {
-
       id: string;
-
     }[];
-
   };
-
 };
 
 
@@ -52,73 +41,156 @@ export async function loader({
   context,
 }: Route.LoaderArgs) {
 
-
   const {storefront} = context;
 
 
+  /*
+   * --------------------------------------------------
+   * Try Shopify first
+   * --------------------------------------------------
+   */
+
   try {
 
-
-    const data =
-      await storefront.query(
-        PRODUCT_QUERY,
-        {
-          variables: {
-            handle: params.handle,
-          },
+    const data = await storefront.query(
+      PRODUCT_QUERY,
+      {
+        variables: {
+          handle: params.handle,
         },
-      );
+      },
+    );
 
 
+    if (data.product) {
 
-    if(data.product) {
-
-
-      const product =
+      const shopifyProduct =
         data.product as ShopifyProduct;
 
 
+      /*
+       * Find matching demo product.
+       *
+       * This lets the Shopify product use the same
+       * Product structure as the rest of the site.
+       */
 
-      return {
+      const demoProduct =
+        coffeeProducts.find(
+          (item) =>
+            item.handle === shopifyProduct.handle,
+        );
 
-        product: {
 
-          id:
-            product.id,
+      /*
+       * If a matching demo product exists,
+       * preserve its coffee-specific information.
+       */
 
+      if (demoProduct) {
+
+        const product: Product = {
+
+          ...demoProduct,
+
+          id: shopifyProduct.id,
 
           merchandiseId:
-            product.variants.nodes[0]?.id ?? "",
-
+            shopifyProduct.variants.nodes[0]?.id ??
+            demoProduct.merchandiseId,
 
           title:
-            product.title,
-
+            shopifyProduct.title,
 
           handle:
-            product.handle,
-
+            shopifyProduct.handle,
 
           image:
-            product.featuredImage?.url ??
-            "/images/blend-collection.jpg",
-
+            shopifyProduct.featuredImage?.url ??
+            demoProduct.image,
 
           price:
-            `$${product.priceRange.minVariantPrice.amount}`,
-
+            `$${shopifyProduct.priceRange.minVariantPrice.amount}`,
 
           description:
-            product.description ?? "",
+            shopifyProduct.description ??
+            demoProduct.notes,
 
-        },
+        };
 
+
+        return {
+          product,
+        };
+
+      }
+
+
+      /*
+       * --------------------------------------------------
+       * Shopify product without matching demo data
+       * --------------------------------------------------
+       *
+       * Give it sensible Java defaults so it still
+       * conforms to Product.
+       */
+
+      const product: Product = {
+
+        id: shopifyProduct.id,
+
+        merchandiseId:
+          shopifyProduct.variants.nodes[0]?.id ?? "",
+
+        handle:
+          shopifyProduct.handle,
+
+        title:
+          shopifyProduct.title,
+
+        category:
+          "Single Origin",
+
+        image:
+          shopifyProduct.featuredImage?.url ??
+          "/images/blend-collection.jpg",
+
+        price:
+          `$${shopifyProduct.priceRange.minVariantPrice.amount}`,
+
+        origin:
+          "Java",
+
+        roast:
+          "Medium Roast",
+
+        notes:
+          "Chocolate, caramel, toasted almond",
+
+        weight:
+          "12 oz",
+
+        grind:
+          "Whole Bean",
+
+        intensity:
+          3,
+
+        featured:
+          false,
+
+        description:
+          shopifyProduct.description ?? "",
+      };
+
+
+      return {
+        product,
       };
 
     }
 
-
-  } catch(error) {
+  } catch (error) {
 
     console.log(
       "Shopify product unavailable. Using demo product.",
@@ -128,57 +200,77 @@ export async function loader({
   }
 
 
+  /*
+   * --------------------------------------------------
+   * Demo Product Fallback
+   * --------------------------------------------------
+   */
 
   const demoProduct =
     coffeeProducts.find(
       (item) =>
-        item.handle === params.handle
+        item.handle === params.handle,
     );
 
 
-
-  if(!demoProduct) {
+  if (!demoProduct) {
 
     throw new Response(
       "Product Not Found",
       {
-        status:404,
-      }
+        status: 404,
+      },
     );
 
   }
 
 
+  const product: Product = {
 
-  return {
-  product: {
     ...demoProduct,
+
     description:
       demoProduct.notes ?? "",
-  },
-};
+  };
+
+
+  return {
+    product,
+  };
 
 }
 
+
+/*
+ * --------------------------------------------------
+ * Product Page
+ * --------------------------------------------------
+ */
 
 export default function ProductPage({
   loaderData,
 }: Route.ComponentProps) {
 
-  const product = loaderData.product;
+  const product =
+    loaderData.product;
 
-  const {addToCart} = useCart();
+  const {addToCart} =
+    useCart();
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] =
+    useState(1);
 
 
   return (
 
     <main className="product-page">
 
-
       <div className="product-detail">
 
+
+        {/* --------------------------------
+            IMAGE
+        -------------------------------- */}
 
         <div className="product-detail-image">
 
@@ -190,8 +282,15 @@ export default function ProductPage({
         </div>
 
 
+        {/* --------------------------------
+            INFORMATION
+        -------------------------------- */}
 
         <div className="product-detail-info">
+
+          <span className="product-card-roast">
+            {product.roast}
+          </span>
 
 
           <h1>
@@ -199,13 +298,9 @@ export default function ProductPage({
           </h1>
 
 
-
           <p className="product-price">
-
             {product.price}
-
           </p>
-
 
 
           <p className="product-description">
@@ -215,55 +310,105 @@ export default function ProductPage({
 
           </p>
 
-<div className="product-quantity">
 
-  <button
-    onClick={() =>
-      setQuantity((q) =>
-        Math.max(1, q - 1)
-      )
-    }
-  >
-    −
-  </button>
+          {/* --------------------------------
+              Coffee Details
+          -------------------------------- */}
+
+          <div className="product-meta">
+
+            <div>
+              <span>Origin</span>
+              <strong>
+                {product.origin}
+              </strong>
+            </div>
+
+            <div>
+              <span>Weight</span>
+              <strong>
+                {product.weight}
+              </strong>
+            </div>
+
+            <div>
+              <span>Grind</span>
+              <strong>
+                {product.grind}
+              </strong>
+            </div>
+
+          </div>
 
 
-  <span>
-    {quantity}
-  </span>
+          {/* --------------------------------
+              Quantity
+          -------------------------------- */}
+
+          <div className="product-quantity">
+
+            <button
+              type="button"
+              onClick={() =>
+                setQuantity((q) =>
+                  Math.max(1, q - 1),
+                )
+              }
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
 
 
-  <button
-    onClick={() =>
-      setQuantity((q) => q + 1)
-    }
-  >
-    +
-  </button>
+            <span>
+              {quantity}
+            </span>
 
-</div>
 
-<button
+            <button
+              type="button"
+              onClick={() =>
+                setQuantity((q) => q + 1)
+              }
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+
+          </div>
+
+
+          {/* --------------------------------
+              Add To Cart
+          -------------------------------- */}
+
+          <button
+  type="button"
   className="add-to-cart"
+  disabled={!product.merchandiseId}
   onClick={() => {
 
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+    if (!product.merchandiseId) {
+      return;
     }
+
+    addToCart(
+      product,
+      quantity,
+    );
 
   }}
 >
-  Add to Cart
+  {product.merchandiseId
+    ? "Add to Cart"
+    : "Unavailable"}
 </button>
-          
+
         </div>
 
-
       </div>
-
 
     </main>
 
   );
-
 }

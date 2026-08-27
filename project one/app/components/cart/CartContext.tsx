@@ -8,8 +8,11 @@ import {
 
 import type {Product} from "~/types/product";
 
+/* ==================================================
+   Cart Types
+================================================== */
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
   quantity: number;
 }
 
@@ -18,202 +21,329 @@ interface CartContextType {
 
   addToCart: (
     product: Product,
-    quantity?: number
+    quantity?: number,
   ) => void;
 
-  removeFromCart: (id: string) => void;
+  removeFromCart: (
+    id: string,
+  ) => void;
 
-  increaseQuantity: (id: string) => void;
+  increaseQuantity: (
+    id: string,
+  ) => void;
 
-  decreaseQuantity: (id: string) => void;
+  decreaseQuantity: (
+    id: string,
+  ) => void;
+
+  clearCart: () => void;
 }
- 
+
+/* ==================================================
+   Storage
+================================================== */
+
+const CART_STORAGE_KEY =
+  "java-cart-v2";
+
+/* ==================================================
+   Context
+================================================== */
+
 const CartContext =
-  createContext<CartContextType | null>(null);
+  createContext<CartContextType | null>(
+    null,
+  );
+
+/* ==================================================
+   Provider
+================================================== */
 
 export function CartProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const [cartItems, setCartItems] =
+    useState<CartItem[]>(() => {
+      if (
+        typeof window === "undefined"
+      ) {
+        return [];
+      }
 
+      try {
+        const savedCart =
+          localStorage.getItem(
+            CART_STORAGE_KEY,
+          );
 
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+        if (!savedCart) {
+          return [];
+        }
 
-  if (typeof window === "undefined") {
-    return [];
-  }
+        const parsedCart =
+          JSON.parse(savedCart);
 
+        if (!Array.isArray(parsedCart)) {
+          return [];
+        }
 
-  const savedCart =
-    localStorage.getItem("roast-revel-cart");
+        return parsedCart as CartItem[];
+      } catch (error) {
+        console.error(
+          "Failed to load Java cart:",
+          error,
+        );
 
+        localStorage.removeItem(
+          CART_STORAGE_KEY,
+        );
 
-  return savedCart
-    ? (JSON.parse(savedCart) as CartItem[])
-    : [];
+        return [];
+      }
+    });
 
-});
+  /* ==================================================
+     Save Cart
+  ================================================== */
 
-useEffect(() => {
-
-  localStorage.setItem(
-    "roast-revel-cart",
-    JSON.stringify(cartItems)
-  );
-
-}, [cartItems]);
-
-useEffect(() => {
-  try {
-    const savedCart = localStorage.getItem("coffee-cart");
-
-    if (savedCart) {
-      const parsed = JSON.parse(savedCart) as CartItem[];
-      setCartItems(parsed);
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(cartItems),
+      );
+    } catch (error) {
+      console.error(
+        "Failed to save Java cart:",
+        error,
+      );
     }
-  } catch (error) {
-    console.error("Failed to load cart:", error);
-    localStorage.removeItem("coffee-cart");
-  }
-}, []);
+  }, [cartItems]);
 
-  const [
-    checkoutUrl,
-    setCheckoutUrl
-  ] = useState<string | null>(null);
-
-
+  /* ==================================================
+     Add To Cart
+  ================================================== */
 
   function addToCart(
-  product: Product,
-  quantity = 1
-) {
-
-  setCartItems((current) => {
-
-    const existing =
-      current.find(
-        (item) =>
-          item.id === product.id
-      );
-
-
-    if (existing) {
-
-      return current.map(
-        (item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity:
-                  item.quantity + quantity,
-              }
-            : item
-      );
-
+    product: Product,
+    quantity = 1,
+  ) {
+    if (quantity <= 0) {
+      return;
     }
 
-
-    return [
-  ...current,
-  {
-    ...product,
-    quantity,
-  },
-];
-
-  });
-
-}
-
-  function increaseQuantity(id: string) {
-  setCartItems((current) =>
-    current.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            quantity: item.quantity + 1,
-          }
-        : item
-    )
-  );
-}
-
-
-function decreaseQuantity(id: string) {
-  setCartItems((current) =>
-    current
-      .map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity - 1,
-            }
-          : item
-      )
-      .filter((item) => item.quantity > 0)
-  );
-}
-
-
-
-  function removeFromCart(
-    id:string
-  ) {
-
-    setCartItems(
-      (current) =>
-        current.filter(
+    setCartItems((current) => {
+      const existing =
+        current.find(
           (item) =>
-            item.id !== id
-        )
-    );
+            item.id === product.id,
+        );
 
+      if (existing) {
+        return current.map((item) => {
+          if (
+            item.id !== product.id
+          ) {
+            return item;
+          }
+
+          const updatedItem: CartItem = {
+            id: item.id,
+            merchandiseId:
+              item.merchandiseId,
+            handle: item.handle,
+            title: item.title,
+            category: item.category,
+            image: item.image,
+            price: item.price,
+            origin: item.origin,
+            roast: item.roast,
+            notes: item.notes,
+            weight: item.weight,
+            grind: item.grind,
+            intensity: item.intensity,
+            featured: item.featured,
+            description:
+              item.description,
+            quantity:
+              item.quantity + quantity,
+          };
+
+          return updatedItem;
+        });
+      }
+
+      const newItem: CartItem = {
+        id: product.id,
+        merchandiseId:
+          product.merchandiseId,
+        handle: product.handle,
+        title: product.title,
+        category: product.category,
+        image: product.image,
+        price: product.price,
+        origin: product.origin,
+        roast: product.roast,
+        notes: product.notes,
+        weight: product.weight,
+        grind: product.grind,
+        intensity: product.intensity,
+        featured: product.featured,
+        description:
+          product.description,
+        quantity,
+      };
+
+      return [
+        ...current,
+        newItem,
+      ];
+    });
   }
 
+  /* ==================================================
+     Increase Quantity
+  ================================================== */
 
+  function increaseQuantity(
+    id: string,
+  ) {
+    setCartItems((current) =>
+      current.map((item) => {
+        if (item.id !== id) {
+          return item;
+        }
 
+        const updatedItem: CartItem = {
+          id: item.id,
+          merchandiseId:
+            item.merchandiseId,
+          handle: item.handle,
+          title: item.title,
+          category: item.category,
+          image: item.image,
+          price: item.price,
+          origin: item.origin,
+          roast: item.roast,
+          notes: item.notes,
+          weight: item.weight,
+          grind: item.grind,
+          intensity: item.intensity,
+          featured: item.featured,
+          description:
+            item.description,
+          quantity:
+            item.quantity + 1,
+        };
+
+        return updatedItem;
+      }),
+    );
+  }
+
+  /* ==================================================
+     Decrease Quantity
+  ================================================== */
+
+  function decreaseQuantity(
+    id: string,
+  ) {
+    setCartItems((current) =>
+      current
+        .map((item) => {
+          if (item.id !== id) {
+            return item;
+          }
+
+          const updatedItem: CartItem = {
+            id: item.id,
+            merchandiseId:
+              item.merchandiseId,
+            handle: item.handle,
+            title: item.title,
+            category: item.category,
+            image: item.image,
+            price: item.price,
+            origin: item.origin,
+            roast: item.roast,
+            notes: item.notes,
+            weight: item.weight,
+            grind: item.grind,
+            intensity: item.intensity,
+            featured: item.featured,
+            description:
+              item.description,
+            quantity:
+              item.quantity - 1,
+          };
+
+          return updatedItem;
+        })
+        .filter(
+          (item) =>
+            item.quantity > 0,
+        ),
+    );
+  }
+
+  /* ==================================================
+     Remove From Cart
+  ================================================== */
+
+  function removeFromCart(
+    id: string,
+  ) {
+    setCartItems((current) =>
+      current.filter(
+        (item) =>
+          item.id !== id,
+      ),
+    );
+  }
+
+  /* ==================================================
+     Clear Cart
+  ================================================== */
+
+  function clearCart() {
+    setCartItems([]);
+  }
+
+  /* ==================================================
+     Provider
+  ================================================== */
 
   return (
-
     <CartContext.Provider
       value={{
-    cartItems,
-    addToCart,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
-  }}
-
+        cartItems,
+        addToCart,
+        removeFromCart,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart,
+      }}
     >
-
       {children}
-
     </CartContext.Provider>
-
   );
-
 }
 
+/* ==================================================
+   Hook
+================================================== */
 
-
-
-export function useCart(){
-
+export function useCart() {
   const context =
     useContext(CartContext);
 
-
-  if(!context){
-
+  if (!context) {
     throw new Error(
-      "useCart must be used inside CartProvider"
+      "useCart must be used inside CartProvider",
     );
-
   }
 
-
   return context;
-
 }

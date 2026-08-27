@@ -1,18 +1,18 @@
-import type { ReactNode } from "react";
 import Header from "./Header";
 
-interface PageLayoutProps {
-  children: ReactNode;
-}
-
-export default function PageLayout({ children }: PageLayoutProps) {
+export default function PageLayout({
+  children,
+  ...props
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div>
+    <>
       <Header />
 
       <main>
         {children}
       </main>
-    </div>
+    </>
   );
 }

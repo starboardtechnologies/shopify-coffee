@@ -4,17 +4,17 @@ const collections = [
   {
     title: "Espresso",
     image: "/images/espresso-collection.jpg",
-    link: "/collections/espresso",
+    link: "/collections",
   },
   {
     title: "Single Origin",
     image: "/images/singleorigin-collection.jpg",
-    link: "/collections/single-origin",
+    link: "/collections",
   },
   {
     title: "Blends",
     image: "/images/blend-collection.jpg",
-    link: "/collections/blends",
+    link: "/collections",
   },
 ];
 

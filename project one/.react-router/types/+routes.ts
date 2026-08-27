@@ -14,6 +14,9 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/api/coffee-assistant": {
+    params: {};
+  };
   "/:locale?": {
     params: {
       "locale"?: string;
@@ -47,6 +50,16 @@ type Pages = {
       "handle": string;
     };
   };
+  "/:locale?/subscribe": {
+    params: {
+      "locale"?: string;
+    };
+  };
+  "/:locale?/checkout": {
+    params: {
+      "locale"?: string;
+    };
+  };
   "/:locale?/story": {
     params: {
       "locale"?: string;
@@ -77,11 +90,15 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*" | "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json";
+    page: "/" | "/api/coffee-assistant" | "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/subscribe" | "/:locale?/checkout" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*" | "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json";
+  };
+  "routes/api.coffee-assistant.ts": {
+    id: "routes/api.coffee-assistant";
+    page: "/api/coffee-assistant";
   };
   "routes/($locale).tsx": {
     id: "routes/($locale)";
-    page: "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*";
+    page: "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/subscribe" | "/:locale?/checkout" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*";
   };
   "routes/($locale).collections._index.tsx": {
     id: "routes/($locale).collections._index";
@@ -103,6 +120,14 @@ type RouteFiles = {
     id: "routes/($locale).pages.$handle";
     page: "/:locale?/pages/:handle";
   };
+  "routes/($locale).subscribe.tsx": {
+    id: "routes/($locale).subscribe";
+    page: "/:locale?/subscribe";
+  };
+  "routes/($locale).checkout.tsx": {
+    id: "routes/($locale).checkout";
+    page: "/:locale?/checkout";
+  };
   "routes/($locale)._index.tsx": {
     id: "routes/($locale)._index";
     page: "/:locale?";
@@ -119,23 +144,23 @@ type RouteFiles = {
     id: "routes/($locale).$";
     page: "/:locale?/*";
   };
-  "../../../../../../..//Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout.jsx": {
-    id: "/Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout";
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout.jsx": {
+    id: "/Users/macbookpro/Desktop/shopify-coffee/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout";
     page: "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json" | "/";
   };
-  "../../../../../../..//Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/graphiql.jsx": {
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/graphiql.jsx": {
     id: "vite/virtual-routes/routes/graphiql";
     page: "/graphiql";
   };
-  "../../../../../../..//Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/subrequest-profiler.jsx": {
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/subrequest-profiler.jsx": {
     id: "vite/virtual-routes/routes/subrequest-profiler";
     page: "/subrequest-profiler";
   };
-  "../../../../../../..//Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json.jsx": {
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json.jsx": {
     id: "vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json";
     page: "/.well-known/appspecific/com.chrome.devtools.json";
   };
-  "../../../../../../..//Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/index.jsx": {
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/index.jsx": {
     id: "vite/virtual-routes/routes/index";
     page: "/";
   };
@@ -143,17 +168,20 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
+  "routes/api.coffee-assistant": typeof import("./app/routes/api.coffee-assistant.ts");
   "routes/($locale)": typeof import("./app/routes/($locale).tsx");
   "routes/($locale).collections._index": typeof import("./app/routes/($locale).collections._index.tsx");
   "routes/($locale).policies.$handle": typeof import("./app/routes/($locale).policies.$handle.tsx");
   "routes/($locale).products.$handle": typeof import("./app/routes/($locale).products.$handle.tsx");
   "routes/($locale).policies._index": typeof import("./app/routes/($locale).policies._index.tsx");
   "routes/($locale).pages.$handle": typeof import("./app/routes/($locale).pages.$handle.tsx");
+  "routes/($locale).subscribe": typeof import("./app/routes/($locale).subscribe.tsx");
+  "routes/($locale).checkout": typeof import("./app/routes/($locale).checkout.tsx");
   "routes/($locale)._index": typeof import("./app/routes/($locale)._index.tsx");
   "routes/($locale).story": typeof import("./app/routes/($locale).story.tsx");
   "routes/($locale).cart": typeof import("./app/routes/($locale).cart.tsx");
   "routes/($locale).$": typeof import("./app/routes/($locale).$.tsx");
-  "/Users/User/Desktop/shopify_projectone/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout": unknown;
+  "/Users/macbookpro/Desktop/shopify-coffee/project one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout": unknown;
   "vite/virtual-routes/routes/graphiql": unknown;
   "vite/virtual-routes/routes/subrequest-profiler": unknown;
   "vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json": unknown;

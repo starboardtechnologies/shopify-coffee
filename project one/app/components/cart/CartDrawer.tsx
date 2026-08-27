@@ -1,12 +1,10 @@
 import {Link} from "react-router";
 import {useCart} from "~/components/cart/CartContext";
 
-
 interface CartDrawerProps {
   open: boolean;
   onClose: () => void;
 }
-
 
 export default function CartDrawer({
   open,
@@ -14,11 +12,11 @@ export default function CartDrawer({
 }: CartDrawerProps) {
 
   const {
-  cartItems,
-  removeFromCart,
-  increaseQuantity,
-  decreaseQuantity,
-} = useCart();
+    cartItems,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+  } = useCart();
 
 
   const total = cartItems.reduce(
@@ -26,39 +24,61 @@ export default function CartDrawer({
       sum +
       Number(item.price.replace("$", "")) *
       item.quantity,
-    0
+    0,
   );
 
 
   return (
     <>
 
+      {/* --------------------------------
+          Overlay
+      -------------------------------- */}
+
       {open && (
         <div
           className="cart-overlay"
           onClick={onClose}
+          aria-hidden="true"
         />
       )}
 
 
+      {/* --------------------------------
+          Drawer
+      -------------------------------- */}
 
       <aside
         className={`cart-drawer ${
           open ? "open" : ""
         }`}
+        aria-label="Shopping cart"
       >
 
+        {/* --------------------------------
+            Header
+        -------------------------------- */}
 
         <div className="cart-drawer-header">
 
-          <h2>
-            Your Cart
-          </h2>
+          <div>
+
+            <span className="cart-drawer-label">
+              JAVA
+            </span>
+
+            <h2>
+              Your Cart
+            </h2>
+
+          </div>
 
 
           <button
+            type="button"
             className="drawer-close"
             onClick={onClose}
+            aria-label="Close cart"
           >
             ×
           </button>
@@ -66,18 +86,35 @@ export default function CartDrawer({
         </div>
 
 
+        {/* --------------------------------
+            Empty Cart
+        -------------------------------- */}
 
         {cartItems.length === 0 ? (
 
-          <p>
-            Your cart is empty.
-          </p>
+          <div className="cart-empty">
 
+            <p>
+              Your cart is empty.
+            </p>
+
+            <button
+              type="button"
+              className="cart-empty-link"
+              onClick={onClose}
+            >
+              Continue Shopping
+            </button>
+
+          </div>
 
         ) : (
 
           <>
 
+            {/* --------------------------------
+                Items
+            -------------------------------- */}
 
             <div className="drawer-items">
 
@@ -88,64 +125,78 @@ export default function CartDrawer({
                   className="drawer-item"
                 >
 
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                  />
+                  {/* Image */}
+
+                  <div className="drawer-item-image">
+
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                    />
+
+                  </div>
 
 
+                  {/* Information */}
 
-                  <div>
+                  <div className="drawer-item-info">
 
                     <h3>
                       {item.title}
                     </h3>
 
 
-                    <div className="product-quantity">
-
-  <button
-    onClick={() =>
-      decreaseQuantity(item.id)
-    }
-  >
-    −
-  </button>
+                    <p className="drawer-item-price">
+                      {item.price}
+                    </p>
 
 
-  <span>
-    {item.quantity}
-  </span>
+                    {/* Quantity */}
+
+                    <div className="quantity-controls">
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          decreaseQuantity(item.id)
+                        }
+                        aria-label={`Decrease quantity of ${item.title}`}
+                      >
+                        −
+                      </button>
 
 
-  <button
-    onClick={() =>
-      increaseQuantity(item.id)
-    }
-  >
-    +
-  </button>
-
-</div>
+                      <span>
+                        {item.quantity}
+                      </span>
 
 
-<p>
-  {item.price} × {item.quantity}
-</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          increaseQuantity(item.id)
+                        }
+                        aria-label={`Increase quantity of ${item.title}`}
+                      >
+                        +
+                      </button>
+
+                    </div>
 
 
-<button
-  className="remove-item"
-  onClick={() =>
-    removeFromCart(item.id)
-  }
->
-  Remove
-</button>
+                    {/* Remove */}
 
+                    <button
+                      type="button"
+                      className="remove-item"
+                      onClick={() =>
+                        removeFromCart(item.id)
+                      }
+                    >
+                      Remove
+                    </button>
 
                   </div>
-
 
                 </div>
 
@@ -154,25 +205,28 @@ export default function CartDrawer({
             </div>
 
 
-
+            {/* --------------------------------
+                Footer
+            -------------------------------- */}
 
             <div className="drawer-footer">
 
+              <div className="drawer-total">
 
-              <h3>
-                Total ${total.toFixed(2)}
-              </h3>
+                <span>
+                  Subtotal
+                </span>
+
+                <strong>
+                  ${total.toFixed(2)}
+                </strong>
+
+              </div>
 
 
-
-              <Link
-                to="/cart"
-                className="view-cart"
-                onClick={onClose}
-              >
-                View Cart
-              </Link>
-
+              <p className="drawer-note">
+                Shipping and taxes calculated at checkout.
+              </p>
 
 
               <Link
@@ -184,16 +238,21 @@ export default function CartDrawer({
               </Link>
 
 
-            </div>
+              <Link
+                to="/cart"
+                className="view-cart"
+                onClick={onClose}
+              >
+                View Cart
+              </Link>
 
+            </div>
 
           </>
 
         )}
 
-
       </aside>
-
 
     </>
   );

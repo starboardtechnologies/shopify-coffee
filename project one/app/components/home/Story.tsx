@@ -22,17 +22,23 @@ export default function Story() {
           coffee.
         </p>
 
-        <Link to="/story" className="story-link">
+        <Link
+          to="/story"
+          className="story-link"
+        >
           Learn More →
         </Link>
 
       </div>
 
+
       <div className="story-image">
+
         <img
           src="/images/coffee-roasting.jpg"
           alt="Coffee roasting"
         />
+
       </div>
 
     </section>

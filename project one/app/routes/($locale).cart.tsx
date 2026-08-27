@@ -1,33 +1,7 @@
 import type {Route} from "./+types/($locale).cart";
-import {Form, useActionData} from "react-router";
+import {Link} from "react-router";
 
 import {useCart} from "~/components/cart/CartContext";
-import {CREATE_CART_MUTATION} from "~/graphql/cart";
-
-export async function action({
-  request,
-  context,
-}: Route.ActionArgs) {
-  const formData = await request.formData();
-
-  const lines = JSON.parse(
-    formData.get("lines") as string
-  );
-
-  const result = await context.storefront.mutate(
-    CREATE_CART_MUTATION,
-    {
-      variables: {
-        lines,
-      },
-    },
-  );
-
-  return {
-    checkoutUrl:
-      result.cartCreate.cart.checkoutUrl,
-  };
-}
 
 export default function CartPage() {
   const {
@@ -37,9 +11,6 @@ export default function CartPage() {
     decreaseQuantity,
   } = useCart();
 
-  const actionData =
-    useActionData<typeof action>();
-
   const total = cartItems.reduce(
     (sum, item) =>
       sum +
@@ -48,122 +19,241 @@ export default function CartPage() {
     0,
   );
 
+  const itemCount = cartItems.reduce(
+    (sum, item) =>
+      sum + item.quantity,
+    0,
+  );
+
   return (
     <main className="cart-page">
+
       <section className="cart-container">
-        <h1>
-          Your Cart
-        </h1>
+
+        {/* --------------------------------
+            HEADER
+        -------------------------------- */}
+
+        <header className="cart-header">
+
+          <span className="cart-eyebrow">
+            JAVA
+          </span>
+
+          <h1>
+            Your Cart
+          </h1>
+
+          {cartItems.length > 0 && (
+            <p>
+              {itemCount}{" "}
+              {itemCount === 1
+                ? "item"
+                : "items"}
+            </p>
+          )}
+
+        </header>
+
+
+        {/* --------------------------------
+            EMPTY CART
+        -------------------------------- */}
 
         {cartItems.length === 0 ? (
-          <p>
-            Your cart is empty.
-          </p>
+
+          <div className="cart-empty">
+
+            <div className="cart-empty-icon">
+              ☕
+            </div>
+
+            <h2>
+              Your cart is empty
+            </h2>
+
+            <p>
+              Discover something exceptional
+              for your next cup.
+            </p>
+
+            <Link
+              to="/collections"
+              className="cart-shop-button"
+            >
+              Shop Coffee
+            </Link>
+
+          </div>
+
         ) : (
+
           <>
+
+            {/* --------------------------------
+                CART ITEMS
+            -------------------------------- */}
+
             <div className="cart-items">
+
               {cartItems.map((item) => (
-                <div
+
+                <article
                   key={item.id}
                   className="cart-item"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                  />
+
+                  <div className="cart-item-image">
+
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                    />
+
+                  </div>
+
 
                   <div className="cart-item-info">
-                    <h2>
-                      {item.title}
-                    </h2>
 
-                    <div className="product-quantity">
+                    <div className="cart-item-main">
 
-  <button
-    type="button"
-    onClick={() =>
-      decreaseQuantity(item.id)
-    }
-  >
-    −
-  </button>
+                      <h2>
+                        {item.title}
+                      </h2>
+
+                      <p className="cart-item-price">
+                        {item.price}
+                      </p>
+
+                    </div>
 
 
-  <span>
-    {item.quantity}
-  </span>
+                    <div className="cart-item-bottom">
+
+                      <div className="product-quantity">
+
+                        <button
+                          type="button"
+                          aria-label={`Decrease quantity of ${item.title}`}
+                          onClick={() =>
+                            decreaseQuantity(
+                              item.id,
+                            )
+                          }
+                        >
+                          −
+                        </button>
+
+                        <span>
+                          {item.quantity}
+                        </span>
+
+                        <button
+                          type="button"
+                          aria-label={`Increase quantity of ${item.title}`}
+                          onClick={() =>
+                            increaseQuantity(
+                              item.id,
+                            )
+                          }
+                        >
+                          +
+                        </button>
+
+                      </div>
 
 
-  <button
-    type="button"
-    onClick={() =>
-      increaseQuantity(item.id)
-    }
-  >
-    +
-  </button>
+                      <p className="cart-item-total">
 
-</div>
+                        $
+                        {(
+                          Number(
+                            item.price.replace(
+                              "$",
+                              "",
+                            ),
+                          ) *
+                          item.quantity
+                        ).toFixed(2)}
 
-                    <p>
-  $
-  {(
-    Number(item.price.replace("$", "")) *
-    item.quantity
-  ).toFixed(2)}
-</p>
+                      </p>
+
+                    </div>
+
 
                     <button
-  className="remove-item"
-  type="button"
-  onClick={() =>
-    removeFromCart(item.id)
-  }
->
-  Remove
-</button>
+                      className="remove-item"
+                      type="button"
+                      onClick={() =>
+                        removeFromCart(
+                          item.id,
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+
                   </div>
-                </div>
+
+                </article>
+
               ))}
+
             </div>
+
+
+            {/* --------------------------------
+                SUMMARY
+            -------------------------------- */}
 
             <div className="cart-summary">
-              <h2>
-                Total: ${total.toFixed(2)}
-              </h2>
 
-              <Form method="post">
-                <input
-                  type="hidden"
-                  name="lines"
-                  value={JSON.stringify(
-                    cartItems.map((item) => ({
-                      merchandiseId: item.merchandiseId,
-                      quantity: item.quantity,
-                    })),
-                  )}
-                />
+              <div className="cart-summary-row">
 
-                <button
-                  className="checkout-button"
-                  type="submit"
-                >
-                  Checkout
-                </button>
-              </Form>
+                <span>
+                  Subtotal
+                </span>
 
-              {actionData?.checkoutUrl && (
-                <a
-                  href={actionData.checkoutUrl}
-                  className="checkout-link"
-                >
-                  Continue to Checkout
-                </a>
-              )}
+                <strong>
+                  ${total.toFixed(2)}
+                </strong>
+
+              </div>
+
+
+              <p className="cart-summary-note">
+                Shipping and taxes calculated
+                at checkout.
+              </p>
+
+
+              {/* --------------------------------
+                  DEMO CHECKOUT
+              -------------------------------- */}
+
+              <Link
+                to="/checkout"
+                className="checkout-button"
+              >
+                Checkout
+              </Link>
+
+
+              <Link
+                to="/collections"
+                className="continue-shopping"
+              >
+                ← Continue Shopping
+              </Link>
+
             </div>
+
           </>
+
         )}
+
       </section>
+
     </main>
   );
 }

@@ -13,40 +13,28 @@ export const PRODUCT_QUERY = `#graphql
 
       handle
 
-
       description
 
-
       featuredImage {
-
         url
-
         altText
-
       }
-
 
       priceRange {
-
         minVariantPrice {
-
           amount
-
         }
-
       }
 
+      selectedOrFirstAvailableVariant {
+        id
 
-      variants(
-        first: 1
-      ) {
+        availableForSale
 
-        nodes {
-
-          id
-
+        price {
+          amount
+          currencyCode
         }
-
       }
 
     }
