@@ -1,275 +1,52 @@
-import {
-  Analytics,
-  getShopAnalytics,
-  useNonce,
-  type CartReturn,
-} from '@shopify/hydrogen';
+// app/root.tsx
 
 import {
-  Outlet,
-  useRouteError,
-  isRouteErrorResponse,
-  type ShouldRevalidateFunction,
   Links,
   Meta,
+  Outlet,
   Scripts,
   ScrollRestoration,
-  useRouteLoaderData,
 } from 'react-router';
 
 import type {Route} from './+types/root';
 
-import favicon from '~/assets/favicon.svg';
-
-import {
-  FOOTER_QUERY,
-  HEADER_QUERY,
-} from '~/lib/fragments';
-
-import resetStyles from '~/styles/reset.css?url';
-import appStyles from '~/styles/app.css?url';
-import tailwindCss from './styles/tailwind.css?url';
-
-import PageLayout from './components/PageLayout';
-
-import {CartProvider} from './components/cart/CartContext';
-
-import CoffeeAssistant from '~/components/ai/CoffeeAssistant';
-
-import Footer from '~/components/layout/Footer';
-
-
-export type RootLoader =
-  typeof loader;
+import {CartProvider} from '~/components/cart/CartContext';
 
 
 /*
- * Prevent unnecessary root loader
- * revalidation during navigation.
- */
-export const shouldRevalidate:
-  ShouldRevalidateFunction = ({
-    formMethod,
-    currentUrl,
-    nextUrl,
-  }) => {
-
-    if (
-      formMethod &&
-      formMethod !== 'GET'
-    ) {
-      return true;
-    }
-
-    if (
-      currentUrl.toString() ===
-      nextUrl.toString()
-    ) {
-      return true;
-    }
-
-    return false;
-  };
-
-
-/*
- * Styles and favicon.
- */
-export function links() {
-
-  return [
-
-    {
-      rel: 'preconnect',
-      href: 'https://cdn.shopify.com',
-    },
-
-    {
-      rel: 'preconnect',
-      href: 'https://shop.app',
-    },
-
-    {
-      rel: 'icon',
-      type: 'image/svg+xml',
-      href: favicon,
-    },
-
-  ];
-
-}
-
-
-/*
- * Root loader.
+ * ==================================================
+ * Root Loader
+ * ==================================================
  *
- * Loads storefront, cart, customer,
- * analytics, and navigation data.
+ * The portfolio storefront uses local demo data and
+ * does not require a Shopify Storefront API connection.
+ * ==================================================
  */
-export async function loader(
-  args: Route.LoaderArgs,
-) {
 
-  const deferredData =
-    loadDeferredData(args);
-
-  const criticalData =
-    await loadCriticalData(args);
-
-  const {
-    storefront,
-    env,
-  } = args.context;
-
-
-  return {
-
-    ...deferredData,
-
-    ...criticalData,
-
-    publicStoreDomain:
-      env.PUBLIC_STORE_DOMAIN,
-
-    shop:
-      getShopAnalytics({
-        storefront,
-
-        publicStorefrontId:
-          env.PUBLIC_STOREFRONT_ID,
-      }),
-
-    consent: {
-
-      checkoutDomain:
-        env.PUBLIC_CHECKOUT_DOMAIN,
-
-      storefrontAccessToken:
-        env.PUBLIC_STOREFRONT_API_TOKEN,
-
-      withPrivacyBanner:
-        false,
-
-      country:
-        args.context.storefront.i18n.country,
-
-      language:
-        args.context.storefront.i18n.language,
-
-    },
-
-  };
-
-}
-
-
-/*
- * Load critical storefront data.
- */
-async function loadCriticalData({
-  context,
+export async function loader({
+  request: _request,
 }: Route.LoaderArgs) {
 
-  const {
-    storefront,
-  } = context;
-
-
-  const [header] =
-    await Promise.all([
-
-      storefront.query(
-        HEADER_QUERY,
-        {
-          cache:
-            storefront.CacheLong(),
-
-          variables: {
-            headerMenuHandle:
-              'main-menu',
-          },
-        },
-      ),
-
-    ]);
-
-
-  return {
-    header,
-  };
+  return {};
 
 }
 
 
 /*
- * Load deferred application data.
+ * ==================================================
+ * Layout
+ * ==================================================
  *
- * Hydrogen Analytics expects the cart
- * to use its CartReturn type.
+ * Provides the HTML document shell used by the
+ * React Router application.
+ * ==================================================
  */
-function loadDeferredData({
-  context,
-}: Route.LoaderArgs) {
 
-  const {
-    storefront,
-    customerAccount,
-    cart,
-  } = context;
-
-
-  const footer =
-    storefront
-      .query(
-        FOOTER_QUERY,
-        {
-          cache:
-            storefront.CacheLong(),
-
-          variables: {
-            footerMenuHandle:
-              'footer',
-          },
-        },
-      )
-      .catch((error: Error) => {
-
-        console.error(error);
-
-        return null;
-
-      });
-
-
-  return {
-
-    cart:
-      cart.get() as Promise<
-        CartReturn | null
-      >,
-
-    isLoggedIn:
-      customerAccount.isLoggedIn(),
-
-    footer,
-
-  };
-
-}
-
-
-/*
- * Application document layout.
- */
 export function Layout({
   children,
 }: {
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }) {
-
-  const nonce =
-    useNonce();
-
 
   return (
 
@@ -284,21 +61,6 @@ export function Layout({
           content="width=device-width,initial-scale=1"
         />
 
-        <link
-          rel="stylesheet"
-          href={tailwindCss}
-        />
-
-        <link
-          rel="stylesheet"
-          href={resetStyles}
-        />
-
-        <link
-          rel="stylesheet"
-          href={appStyles}
-        />
-
         <Meta />
 
         <Links />
@@ -310,14 +72,9 @@ export function Layout({
 
         {children}
 
+        <ScrollRestoration />
 
-        <ScrollRestoration
-          nonce={nonce}
-        />
-
-        <Scripts
-          nonce={nonce}
-        />
+        <Scripts />
 
       </body>
 
@@ -329,61 +86,25 @@ export function Layout({
 
 
 /*
- * Main application component.
+ * ==================================================
+ * Root Application
+ * ==================================================
  *
- * The cart remains connected to
- * Hydrogen Analytics.
+ * Uses the local cart provider. Shopify Analytics is
+ * intentionally not initialized because this portfolio
+ * deployment does not have a Shopify store connection.
+ * ==================================================
  */
+
 export default function App() {
-
-  const data =
-    useRouteLoaderData<RootLoader>(
-      'root',
-    );
-
-
-  if (!data) {
-
-    return (
-
-      <CartProvider>
-
-        <Outlet />
-
-      </CartProvider>
-
-    );
-
-  }
-
 
   return (
 
-    <Analytics.Provider
+    <CartProvider>
 
-      cart={data.cart}
+      <Outlet />
 
-      shop={data.shop}
-
-      consent={data.consent}
-
-    >
-
-      <CartProvider>
-
-        <PageLayout {...data}>
-
-          <Outlet />
-
-          <Footer />
-
-          <CoffeeAssistant />
-
-        </PageLayout>
-
-      </CartProvider>
-
-    </Analytics.Provider>
+    </CartProvider>
 
   );
 
@@ -391,70 +112,58 @@ export default function App() {
 
 
 /*
- * Application-level error boundary.
+ * ==================================================
+ * Error Boundary
+ * ==================================================
+ *
+ * Displays a simple fallback instead of a blank page
+ * when an unexpected application error occurs.
+ * ==================================================
  */
-export function ErrorBoundary() {
 
-  const error =
-    useRouteError();
+export function ErrorBoundary({
+  error,
+}: Route.ErrorBoundaryProps) {
 
-
-  let errorMessage =
-    'Unknown error';
-
-  let errorStatus =
-    500;
+  let message =
+    'Something went wrong.';
 
 
   if (
-    isRouteErrorResponse(error)
+    error &&
+    typeof error === 'object' &&
+    'message' in error
   ) {
 
-    errorMessage =
-      error?.data?.message ??
-      error.data;
-
-    errorStatus =
-      error.status;
-
-  }
-
-  else if (
-    error instanceof Error
-  ) {
-
-    errorMessage =
-      error.message;
+    message =
+      String(error.message);
 
   }
 
 
   return (
 
-    <div className="route-error">
+    <main className="error-page">
 
-      <h1>
-        Oops
-      </h1>
+      <div className="error-page-content">
 
-      <h2>
-        {errorStatus}
-      </h2>
+        <h1>
+          Java Coffee
+        </h1>
 
 
-      {errorMessage && (
+        <h2>
+          {message}
+        </h2>
 
-        <fieldset>
 
-          <pre>
-            {errorMessage}
-          </pre>
+        <p>
+          An unexpected application error occurred.
+        </p>
 
-        </fieldset>
+      </div>
 
-      )}
-
-    </div>
+    </main>
 
   );
 
