@@ -4,7 +4,6 @@ import {
 
 import {
   createContentSecurityPolicy,
-  type HydrogenRouterContextProvider,
 } from '@shopify/hydrogen';
 
 import type {
@@ -12,14 +11,18 @@ import type {
   EntryContext,
 } from 'react-router';
 
-
 /*
  * ==================================================
- * Vercel Server Entry
+ * Vercel SSR Entry
  * ==================================================
  *
- * Uses Vercel's React Router request handler for
- * server-side rendering.
+ * Handles React Router SSR through Vercel's
+ * React Router adapter.
+ *
+ * The deployed portfolio does not require the
+ * Shopify checkout domain for initial rendering,
+ * so CSP generation does not depend on Hydrogen
+ * environment context being available here.
  * ==================================================
  */
 
@@ -31,37 +34,11 @@ export default async function handleRequest(
   context?: AppLoadContext,
 ): Promise<Response> {
 
-  const hydrogenContext =
-    context as
-      | HydrogenRouterContextProvider
-      | undefined;
-
-
-  /*
-   * Create the Content Security Policy used
-   * by Hydrogen for storefront requests.
-   */
-
   const {
     nonce,
     header,
   } =
-    createContentSecurityPolicy({
-      shop: {
-        checkoutDomain:
-          hydrogenContext?.env
-            .PUBLIC_CHECKOUT_DOMAIN,
-
-        storeDomain:
-          hydrogenContext?.env
-            .PUBLIC_STORE_DOMAIN,
-      },
-    });
-
-
-  /*
-   * Let Vercel handle React Router SSR.
-   */
+    createContentSecurityPolicy();
 
   const response =
     await vercelHandleRequest(
@@ -75,16 +52,10 @@ export default async function handleRequest(
       },
     );
 
-
-  /*
-   * Attach Hydrogen's CSP header.
-   */
-
   response.headers.set(
     'Content-Security-Policy',
     header,
   );
-
 
   return response;
 }
