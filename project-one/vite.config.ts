@@ -9,76 +9,64 @@ import {reactRouter} from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 
 
-export default defineConfig(
-  ({isSsrBuild}) => ({
+export default defineConfig({
 
-    plugins: [
-      tailwindcss(),
-      hydrogen(),
-      reactRouter(),
-    ],
+  plugins: [
+    tailwindcss(),
+    hydrogen(),
+    reactRouter(),
+  ],
 
 
-    resolve: {
+  resolve: {
 
-      alias: {
+    alias: {
 
-        // Hydrogen app alias.
-        '~': fileURLToPath(
-          new URL(
-            './app',
-            import.meta.url,
-          ),
+      // Hydrogen app alias.
+      '~': fileURLToPath(
+        new URL(
+          './app',
+          import.meta.url,
         ),
-
-      },
-
-      tsconfigPaths: true,
+      ),
 
     },
 
+    tsconfigPaths: true,
 
-    build: {
-
-      // Use the custom Hydrogen server
-      // as the SSR entrypoint.
-      rollupOptions:
-        isSsrBuild
-          ? {
-              input:
-                './server/app.ts',
-            }
-          : undefined,
-
-      // Prevent assets from being
-      // inlined as base64.
-      assetsInlineLimit: 0,
-
-    },
+  },
 
 
-    ssr: {
+  build: {
 
-      optimizeDeps: {
+    // Prevent assets from being
+    // inlined as base64.
+    assetsInlineLimit: 0,
 
-        include: [
-          'react-router > set-cookie-parser',
-          'react-router > cookie',
-          'react-router',
-        ],
-
-      },
-
-    },
+  },
 
 
-    server: {
+  ssr: {
 
-      allowedHosts: [
-        '.tryhydrogen.dev',
+    optimizeDeps: {
+
+      include: [
+        'react-router > set-cookie-parser',
+        'react-router > cookie',
+        'react-router',
       ],
 
     },
 
-  }),
-);
+  },
+
+
+  server: {
+
+    allowedHosts: [
+      '.tryhydrogen.dev',
+    ],
+
+  },
+
+});
