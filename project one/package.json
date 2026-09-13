@@ -5,7 +5,7 @@
   "version": "2026.4.5",
   "type": "module",
   "scripts": {
-    "build": "react-router build",
+    "build": "node node_modules/@react-router/dev/bin.js build",
     "dev": "shopify hydrogen dev --codegen",
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
