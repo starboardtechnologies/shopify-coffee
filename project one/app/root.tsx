@@ -1,4 +1,9 @@
-import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
+import {
+  Analytics,
+  getShopAnalytics,
+  useNonce,
+  type CartReturn,
+} from '@shopify/hydrogen';
 
 import {
   Outlet,
@@ -38,10 +43,9 @@ export type RootLoader =
   typeof loader;
 
 
-/**
- * This is important to avoid
- * re-fetching root queries on
- * sub-navigations.
+/*
+ * Prevent unnecessary root loader
+ * revalidation during navigation.
  */
 export const shouldRevalidate:
   ShouldRevalidateFunction = ({
@@ -68,8 +72,8 @@ export const shouldRevalidate:
   };
 
 
-/**
- * Styles and favicon
+/*
+ * Styles and favicon.
  */
 export function links() {
 
@@ -96,6 +100,12 @@ export function links() {
 }
 
 
+/*
+ * Root loader.
+ *
+ * Loads storefront, cart, customer,
+ * analytics, and navigation data.
+ */
 export async function loader(
   args: Route.LoaderArgs,
 ) {
@@ -153,6 +163,9 @@ export async function loader(
 }
 
 
+/*
+ * Load critical storefront data.
+ */
 async function loadCriticalData({
   context,
 }: Route.LoaderArgs) {
@@ -188,6 +201,12 @@ async function loadCriticalData({
 }
 
 
+/*
+ * Load deferred application data.
+ *
+ * Hydrogen Analytics expects the cart
+ * to use its CartReturn type.
+ */
 function loadDeferredData({
   context,
 }: Route.LoaderArgs) {
@@ -224,7 +243,10 @@ function loadDeferredData({
 
   return {
 
-    cart: cart.get(),
+    cart:
+      cart.get() as Promise<
+        CartReturn | null
+      >,
 
     isLoggedIn:
       customerAccount.isLoggedIn(),
@@ -236,6 +258,9 @@ function loadDeferredData({
 }
 
 
+/*
+ * Application document layout.
+ */
 export function Layout({
   children,
 }: {
@@ -294,8 +319,6 @@ export function Layout({
           nonce={nonce}
         />
 
-
-
       </body>
 
     </html>
@@ -305,6 +328,12 @@ export function Layout({
 }
 
 
+/*
+ * Main application component.
+ *
+ * The cart remains connected to
+ * Hydrogen Analytics.
+ */
 export default function App() {
 
   const data =
@@ -361,6 +390,9 @@ export default function App() {
 }
 
 
+/*
+ * Application-level error boundary.
+ */
 export function ErrorBoundary() {
 
   const error =

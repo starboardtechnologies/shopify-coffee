@@ -14,9 +14,21 @@ export type CartLineFragment = Pick<
 > & {
   attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
   cost: {
+    subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     amountPerQuantity: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+    >;
+  };
+  discountAllocations: Array<{
+    discountedAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+  }>;
+  estimatedCost: {
+    amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    compareAtAmount?: StorefrontAPI.Maybe<
       Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
     >;
   };
@@ -47,9 +59,21 @@ export type CartLineComponentFragment = Pick<
 > & {
   attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
   cost: {
+    subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     amountPerQuantity: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+    >;
+  };
+  discountAllocations: Array<{
+    discountedAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+  }>;
+  estimatedCost: {
+    amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+    compareAtAmount?: StorefrontAPI.Maybe<
       Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
     >;
   };
@@ -73,12 +97,27 @@ export type CartLineComponentFragment = Pick<
     Pick<StorefrontAPI.CartLine, 'id' | 'quantity'> & {
       attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
       cost: {
+        subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
         totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
         amountPerQuantity: Pick<
           StorefrontAPI.MoneyV2,
           'currencyCode' | 'amount'
         >;
         compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+        >;
+      };
+      discountAllocations: Array<{
+        discountedAmount: Pick<
+          StorefrontAPI.MoneyV2,
+          'currencyCode' | 'amount'
+        >;
+      }>;
+      estimatedCost: {
+        amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+        subtotalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+        totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+        compareAtAmount?: StorefrontAPI.Maybe<
           Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
         >;
       };
@@ -136,12 +175,33 @@ export type CartApiQueryFragment = Pick<
       | (Pick<StorefrontAPI.CartLine, 'id' | 'quantity'> & {
           attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
           cost: {
+            subtotalAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
             totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
             amountPerQuantity: Pick<
               StorefrontAPI.MoneyV2,
               'currencyCode' | 'amount'
             >;
             compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+            >;
+          };
+          discountAllocations: Array<{
+            discountedAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
+          }>;
+          estimatedCost: {
+            amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+            subtotalAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
+            totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+            compareAtAmount?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
             >;
           };
@@ -174,12 +234,33 @@ export type CartApiQueryFragment = Pick<
       | (Pick<StorefrontAPI.ComponentizableCartLine, 'id' | 'quantity'> & {
           attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
           cost: {
+            subtotalAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
             totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
             amountPerQuantity: Pick<
               StorefrontAPI.MoneyV2,
               'currencyCode' | 'amount'
             >;
             compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+            >;
+          };
+          discountAllocations: Array<{
+            discountedAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
+          }>;
+          estimatedCost: {
+            amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+            subtotalAmount: Pick<
+              StorefrontAPI.MoneyV2,
+              'currencyCode' | 'amount'
+            >;
+            totalAmount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+            compareAtAmount?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
             >;
           };
@@ -209,6 +290,10 @@ export type CartApiQueryFragment = Pick<
             Pick<StorefrontAPI.CartLine, 'id' | 'quantity'> & {
               attributes: Array<Pick<StorefrontAPI.Attribute, 'key' | 'value'>>;
               cost: {
+                subtotalAmount: Pick<
+                  StorefrontAPI.MoneyV2,
+                  'currencyCode' | 'amount'
+                >;
                 totalAmount: Pick<
                   StorefrontAPI.MoneyV2,
                   'currencyCode' | 'amount'
@@ -218,6 +303,26 @@ export type CartApiQueryFragment = Pick<
                   'currencyCode' | 'amount'
                 >;
                 compareAtAmountPerQuantity?: StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
+                >;
+              };
+              discountAllocations: Array<{
+                discountedAmount: Pick<
+                  StorefrontAPI.MoneyV2,
+                  'currencyCode' | 'amount'
+                >;
+              }>;
+              estimatedCost: {
+                amount: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
+                subtotalAmount: Pick<
+                  StorefrontAPI.MoneyV2,
+                  'currencyCode' | 'amount'
+                >;
+                totalAmount: Pick<
+                  StorefrontAPI.MoneyV2,
+                  'currencyCode' | 'amount'
+                >;
+                compareAtAmount?: StorefrontAPI.Maybe<
                   Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>
                 >;
               };
@@ -424,11 +529,11 @@ export type PoliciesQuery = {
 };
 
 interface GeneratedQueryTypes {
-  '#graphql\n  fragment Shop on Shop {\n    id\n    name\n    description\n    primaryDomain {\n      url\n    }\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n    }\n  }\n  query Header(\n    $country: CountryCode\n    $headerMenuHandle: String!\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    shop {\n      ...Shop\n    }\n    menu(handle: $headerMenuHandle) {\n      ...Menu\n    }\n  }\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
+  '#graphql\n  fragment Shop on Shop {\n    id\n    name\n    description\n\n    primaryDomain {\n      url\n    }\n\n    brand {\n      logo {\n        image {\n          url\n        }\n      }\n    }\n  }\n\n  query Header(\n    $country: CountryCode\n    $headerMenuHandle: String!\n    $language: LanguageCode\n  )\n    @inContext(\n      language: $language\n      country: $country\n    ) {\n\n    shop {\n      ...Shop\n    }\n\n    menu(\n      handle: $headerMenuHandle\n    ) {\n      ...Menu\n    }\n  }\n\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n\n    items {\n      ...ChildMenuItem\n    }\n  }\n\n  fragment Menu on Menu {\n    id\n\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
     return: HeaderQuery;
     variables: HeaderQueryVariables;
   };
-  '#graphql\n  query Footer(\n    $country: CountryCode\n    $footerMenuHandle: String!\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    menu(handle: $footerMenuHandle) {\n      ...Menu\n    }\n  }\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n    items {\n      ...ChildMenuItem\n    }\n  }\n  fragment Menu on Menu {\n    id\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
+  '#graphql\n  query Footer(\n    $country: CountryCode\n    $footerMenuHandle: String!\n    $language: LanguageCode\n  )\n    @inContext(\n      language: $language\n      country: $country\n    ) {\n\n    menu(\n      handle: $footerMenuHandle\n    ) {\n      ...Menu\n    }\n  }\n\n  #graphql\n  fragment MenuItem on MenuItem {\n    id\n    resourceId\n    tags\n    title\n    type\n    url\n  }\n\n  fragment ChildMenuItem on MenuItem {\n    ...MenuItem\n  }\n\n  fragment ParentMenuItem on MenuItem {\n    ...MenuItem\n\n    items {\n      ...ChildMenuItem\n    }\n  }\n\n  fragment Menu on Menu {\n    id\n\n    items {\n      ...ParentMenuItem\n    }\n  }\n\n': {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
@@ -436,7 +541,7 @@ interface GeneratedQueryTypes {
     return: PageQuery;
     variables: PageQueryVariables;
   };
-  '#graphql\n  fragment PolicyItem on ShopPolicy {\n    id\n    title\n    handle\n  }\n  query Policies ($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    shop {\n      privacyPolicy {\n        ...PolicyItem\n      }\n      shippingPolicy {\n        ...PolicyItem\n      }\n      termsOfService {\n        ...PolicyItem\n      }\n      refundPolicy {\n        ...PolicyItem\n      }\n      subscriptionPolicy {\n        id\n        title\n        handle\n      }\n    }\n  }\n': {
+  '#graphql\n  fragment PolicyItem on ShopPolicy {\n    id\n    title\n    handle\n  }\n\n  query Policies(\n    $country: CountryCode,\n    $language: LanguageCode\n  )\n    @inContext(\n      country: $country,\n      language: $language\n    ) {\n\n    shop {\n\n      privacyPolicy {\n        ...PolicyItem\n      }\n\n      shippingPolicy {\n        ...PolicyItem\n      }\n\n      termsOfService {\n        ...PolicyItem\n      }\n\n      refundPolicy {\n        ...PolicyItem\n      }\n\n      subscriptionPolicy {\n        id\n        title\n        handle\n      }\n\n    }\n\n  }\n': {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
