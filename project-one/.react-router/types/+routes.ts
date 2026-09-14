@@ -76,12 +76,21 @@ type Pages = {
       "*": string;
     };
   };
+  "/graphiql": {
+    params: {};
+  };
+  "/subrequest-profiler": {
+    params: {};
+  };
+  "/.well-known/appspecific/com.chrome.devtools.json": {
+    params: {};
+  };
 };
 
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/api/coffee-assistant" | "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/subscribe" | "/:locale?/checkout" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*";
+    page: "/" | "/api/coffee-assistant" | "/:locale?" | "/:locale?/collections" | "/:locale?/policies/:handle" | "/:locale?/products/:handle" | "/:locale?/policies" | "/:locale?/pages/:handle" | "/:locale?/subscribe" | "/:locale?/checkout" | "/:locale?/story" | "/:locale?/cart" | "/:locale?/*" | "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json";
   };
   "routes/api.coffee-assistant.ts": {
     id: "routes/api.coffee-assistant";
@@ -135,6 +144,26 @@ type RouteFiles = {
     id: "routes/($locale).$";
     page: "/:locale?/*";
   };
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout.jsx": {
+    id: "/Users/macbookpro/Desktop/shopify-coffee/project-one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout";
+    page: "/graphiql" | "/subrequest-profiler" | "/.well-known/appspecific/com.chrome.devtools.json" | "/";
+  };
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/graphiql.jsx": {
+    id: "vite/virtual-routes/routes/graphiql";
+    page: "/graphiql";
+  };
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/subrequest-profiler.jsx": {
+    id: "vite/virtual-routes/routes/subrequest-profiler";
+    page: "/subrequest-profiler";
+  };
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json.jsx": {
+    id: "vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json";
+    page: "/.well-known/appspecific/com.chrome.devtools.json";
+  };
+  "../node_modules/@shopify/hydrogen/dist/vite/virtual-routes/routes/index.jsx": {
+    id: "vite/virtual-routes/routes/index";
+    page: "/";
+  };
 };
 
 type RouteModules = {
@@ -152,4 +181,9 @@ type RouteModules = {
   "routes/($locale).story": typeof import("./app/routes/($locale).story.tsx");
   "routes/($locale).cart": typeof import("./app/routes/($locale).cart.tsx");
   "routes/($locale).$": typeof import("./app/routes/($locale).$.tsx");
+  "/Users/macbookpro/Desktop/shopify-coffee/project-one/node_modules/@shopify/hydrogen/dist/vite/virtual-routes/layout": unknown;
+  "vite/virtual-routes/routes/graphiql": unknown;
+  "vite/virtual-routes/routes/subrequest-profiler": unknown;
+  "vite/virtual-routes/routes/[.]well-known.appspecific.com[.]chrome[.]devtools[.]json": unknown;
+  "vite/virtual-routes/routes/index": unknown;
 };
