@@ -39,4 +39,3 @@ jobs:
       - name: Build and Publish to Oxygen
         working-directory: ./project-one
         run: npx shopify hydrogen deploy
-  run: nrupx shopify hydrogen deploy npx shopify hydrogen deploy    SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000179852 }}
