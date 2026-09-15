@@ -1,47 +1,45 @@
-// app/root.tsx
-
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-} from 'react-router';
+} from "react-router";
 
-import type {Route} from './+types/root';
+import type {Route} from "./+types/root";
 
-import {CartProvider} from '~/components/cart/CartContext';
+import {
+  useNonce,
+} from "@shopify/hydrogen";
 
-import '~/styles/globals.css';
-import '~/styles/app.css';
+import {CartProvider} from "~/components/cart/CartContext";
 
+import "~/styles/app.css";
 
 /*
  * ==================================================
  * Root Loader
- * ==================================================
- *
- * The portfolio storefront uses local demo data and
- * does not require a Shopify Storefront API connection.
  * ==================================================
  */
 
 export async function loader({
   request: _request,
 }: Route.LoaderArgs) {
-
   return {};
-
 }
-
 
 /*
  * ==================================================
- * Layout
+ * Root Document Layout
  * ==================================================
  *
- * Provides the HTML document shell used by the
- * React Router application.
+ * Hydrogen creates a CSP nonce in entry.server.tsx.
+ * useNonce() retrieves that same nonce through the
+ * Hydrogen NonceProvider.
+ *
+ * React Router's Scripts and ScrollRestoration
+ * generate inline scripts, so they must receive the
+ * same nonce for Oxygen's CSP to allow them to run.
  * ==================================================
  */
 
@@ -50,13 +48,11 @@ export function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  const nonce = useNonce();
 
   return (
-
     <html lang="en">
-
       <head>
-
         <meta charSet="utf-8" />
 
         <meta
@@ -67,107 +63,37 @@ export function Layout({
         <Meta />
 
         <Links />
-
       </head>
 
-
       <body>
-
         {children}
 
-        <ScrollRestoration />
+        <ScrollRestoration
+          nonce={nonce}
+        />
 
-        <Scripts />
-
+        <Scripts
+          nonce={nonce}
+        />
       </body>
-
     </html>
-
   );
-
 }
-
 
 /*
  * ==================================================
- * Root Application
+ * Application Root
  * ==================================================
  *
- * Uses the local cart provider. Shopify Analytics is
- * intentionally not initialized because this portfolio
- * deployment does not have a Shopify store connection.
+ * CartProvider wraps the storefront so cart state
+ * and interactions are available throughout the app.
  * ==================================================
  */
 
 export default function App() {
-
   return (
-
     <CartProvider>
-
       <Outlet />
-
     </CartProvider>
-
   );
-
-}
-
-
-/*
- * ==================================================
- * Error Boundary
- * ==================================================
- *
- * Displays a simple fallback instead of a blank page
- * when an unexpected application error occurs.
- * ==================================================
- */
-
-export function ErrorBoundary({
-  error,
-}: Route.ErrorBoundaryProps) {
-
-  let message =
-    'Something went wrong.';
-
-
-  if (
-    error &&
-    typeof error === 'object' &&
-    'message' in error
-  ) {
-
-    message =
-      String(error.message);
-
-  }
-
-
-  return (
-
-    <main className="error-page">
-
-      <div className="error-page-content">
-
-        <h1>
-          Java Coffee
-        </h1>
-
-
-        <h2>
-          {message}
-        </h2>
-
-
-        <p>
-          An unexpected application error occurred.
-        </p>
-
-      </div>
-
-    </main>
-
-  );
-
 }
