@@ -1,4 +1,7 @@
-import type {LoaderFunctionArgs} from "react-router";
+import {
+  Outlet,
+  type LoaderFunctionArgs,
+} from "react-router";
 
 import Header from "~/components/Header";
 import CoffeeAssistant from "~/components/ai/CoffeeAssistant";
@@ -31,23 +34,18 @@ export async function loader({
  * STOREFRONT LAYOUT
  * ==================================================
  *
- * Header and Coffee Assistant are mounted here so
- * they appear throughout the storefront.
+ * The Outlet renders the active child route.
+ * Header and Coffee Assistant remain available
+ * throughout the storefront.
  * ==================================================
  */
 
-export default function LocaleLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LocaleLayout() {
   return (
     <>
       <Header />
 
-      <main>
-        {children}
-      </main>
+      <Outlet />
 
       <CoffeeAssistant />
     </>
