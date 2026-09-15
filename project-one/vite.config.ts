@@ -1,72 +1,38 @@
-// vite.config.ts
+import {defineConfig} from "vite";
+import {resolve} from "node:path";
 
-import {fileURLToPath} from 'node:url';
-
-import {defineConfig} from 'vite';
-
-import {hydrogen} from '@shopify/hydrogen/vite';
-import {reactRouter} from '@react-router/dev/vite';
-import tailwindcss from '@tailwindcss/vite';
-
+import {hydrogen} from "@shopify/hydrogen/vite";
+import {oxygen} from "@shopify/mini-oxygen/vite";
+import {reactRouter} from "@react-router/dev/vite";
 
 export default defineConfig({
-
   plugins: [
-    tailwindcss(),
     hydrogen(),
+    oxygen(),
     reactRouter(),
   ],
 
-
   resolve: {
-
     alias: {
-
-      // Hydrogen app alias.
-      '~': fileURLToPath(
-        new URL(
-          './app',
-          import.meta.url,
-        ),
-      ),
-
+      "~": resolve(__dirname, "app"),
     },
-
-    tsconfigPaths: true,
-
   },
-
-
-  build: {
-
-    // Prevent assets from being
-    // inlined as base64.
-    assetsInlineLimit: 0,
-
-  },
-
 
   ssr: {
-
-    optimizeDeps: {
-
-      include: [
-        'react-router > set-cookie-parser',
-        'react-router > cookie',
-        'react-router',
+    resolve: {
+      conditions: [
+        "workerd",
+        "worker",
+        "browser",
       ],
-
+      externalConditions: [
+        "workerd",
+        "worker",
+      ],
     },
-
   },
 
-
-  server: {
-
-    allowedHosts: [
-      '.tryhydrogen.dev',
-    ],
-
+  build: {
+    assetsInlineLimit: 0,
   },
-
 });

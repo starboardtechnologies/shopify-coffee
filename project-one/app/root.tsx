@@ -12,6 +12,9 @@ import type {Route} from './+types/root';
 
 import {CartProvider} from '~/components/cart/CartContext';
 
+import '~/styles/globals.css';
+import '~/styles/app.css';
+
 
 /*
  * ==================================================

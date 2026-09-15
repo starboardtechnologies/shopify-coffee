@@ -149,56 +149,20 @@ export function CartProvider({
             return item;
           }
 
-          const updatedItem: CartItem = {
-            id: item.id,
-            merchandiseId:
-              item.merchandiseId,
-            handle: item.handle,
-            title: item.title,
-            category: item.category,
-            image: item.image,
-            price: item.price,
-            origin: item.origin,
-            roast: item.roast,
-            notes: item.notes,
-            weight: item.weight,
-            grind: item.grind,
-            intensity: item.intensity,
-            featured: item.featured,
-            description:
-              item.description,
+          return {
+            ...item,
             quantity:
               item.quantity + quantity,
           };
-
-          return updatedItem;
         });
       }
 
-      const newItem: CartItem = {
-        id: product.id,
-        merchandiseId:
-          product.merchandiseId,
-        handle: product.handle,
-        title: product.title,
-        category: product.category,
-        image: product.image,
-        price: product.price,
-        origin: product.origin,
-        roast: product.roast,
-        notes: product.notes,
-        weight: product.weight,
-        grind: product.grind,
-        intensity: product.intensity,
-        featured: product.featured,
-        description:
-          product.description,
-        quantity,
-      };
-
       return [
         ...current,
-        newItem,
+        {
+          ...product,
+          quantity,
+        },
       ];
     });
   }
@@ -211,35 +175,15 @@ export function CartProvider({
     id: string,
   ) {
     setCartItems((current) =>
-      current.map((item) => {
-        if (item.id !== id) {
-          return item;
-        }
-
-        const updatedItem: CartItem = {
-          id: item.id,
-          merchandiseId:
-            item.merchandiseId,
-          handle: item.handle,
-          title: item.title,
-          category: item.category,
-          image: item.image,
-          price: item.price,
-          origin: item.origin,
-          roast: item.roast,
-          notes: item.notes,
-          weight: item.weight,
-          grind: item.grind,
-          intensity: item.intensity,
-          featured: item.featured,
-          description:
-            item.description,
-          quantity:
-            item.quantity + 1,
-        };
-
-        return updatedItem;
-      }),
+      current.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity:
+                item.quantity + 1,
+            }
+          : item,
+      ),
     );
   }
 
@@ -252,35 +196,15 @@ export function CartProvider({
   ) {
     setCartItems((current) =>
       current
-        .map((item) => {
-          if (item.id !== id) {
-            return item;
-          }
-
-          const updatedItem: CartItem = {
-            id: item.id,
-            merchandiseId:
-              item.merchandiseId,
-            handle: item.handle,
-            title: item.title,
-            category: item.category,
-            image: item.image,
-            price: item.price,
-            origin: item.origin,
-            roast: item.roast,
-            notes: item.notes,
-            weight: item.weight,
-            grind: item.grind,
-            intensity: item.intensity,
-            featured: item.featured,
-            description:
-              item.description,
-            quantity:
-              item.quantity - 1,
-          };
-
-          return updatedItem;
-        })
+        .map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                quantity:
+                  item.quantity - 1,
+              }
+            : item,
+        )
         .filter(
           (item) =>
             item.quantity > 0,
